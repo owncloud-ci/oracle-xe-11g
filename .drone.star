@@ -170,7 +170,7 @@ def prepublish(config):
       },
       'tags': config['internal'],
       'dockerfile': '%s/Dockerfile.%s' % (config['path'], config['arch']),
-      'repo': 'registry.drone.owncloud.com/owncloudci/oracle-xe-11g',
+      'repo': 'registry.drone.owncloud.com/owncloudci/oracle-xe',
       'registry': 'registry.drone.owncloud.com',
       'context': config['path'],
       'purge': False,
@@ -196,7 +196,7 @@ def sleep(config):
       },
     },
     'commands': [
-      'retry -- reg digest --username $DOCKER_USER --password $DOCKER_PASSWORD registry.drone.owncloud.com/owncloudci/oracle-xe-11g:%s' % config['internal'],
+      'retry -- reg digest --username $DOCKER_USER --password $DOCKER_PASSWORD registry.drone.owncloud.com/owncloudci/oracle-xe:%s' % config['internal'],
     ],
   }]
 
@@ -239,7 +239,7 @@ def trivy(config):
         'TRIVY_CACHE_DIR': '/drone/src/trivy'
       },
       'commands': [
-        'retry -- trivy registry.drone.owncloud.com/owncloudci/oracle-xe-11g:%s' % config['internal'],
+        'retry -- trivy registry.drone.owncloud.com/owncloudci/oracle-xe:%s' % config['internal'],
       ],
     },
   ]
@@ -257,7 +257,7 @@ def publish(config):
       },
       'tags': config['tag'],
       'dockerfile': '%s/Dockerfile.%s' % (config['path'], config['arch']),
-      'repo': 'owncloudci/oracle-xe-11g',
+      'repo': 'owncloudci/oracle-xe',
       'context': config['path'],
       'pull_image': False,
     },
@@ -288,7 +288,7 @@ def cleanup(config):
       },
     },
     'commands': [
-      'reg rm --username $DOCKER_USER --password $DOCKER_PASSWORD registry.drone.owncloud.com/owncloudci/oracle-xe-11g:%s' % config['internal'],
+      'reg rm --username $DOCKER_USER --password $DOCKER_PASSWORD registry.drone.owncloud.com/owncloudci/oracle-xe:%s' % config['internal'],
     ],
     'when': {
       'status': [

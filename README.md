@@ -1,19 +1,19 @@
-# oracle-xe-11g
+# oracle-xe
 
-[![Build Status](https://drone.owncloud.com/api/badges/owncloud-ci/oracle-xe-11g/status.svg)](https://drone.owncloud.com/owncloud-ci/oracle-xe-11g)
+[![Build Status](https://drone.owncloud.com/api/badges/owncloud-ci/oracle-xe/status.svg)](https://drone.owncloud.com/owncloud-ci/oracle-xe)
 
-Oracle Express Edition 11g Release 2 on Ubuntu 14.04.1 LTS - including a database for ownCloud CI.
+Oracle Express Edition on Ubuntu - including a database for ownCloud CI.
 
 ## Usage
 
 ```Shell
-docker pull owncloudci/oracle-xe-11g
+docker pull owncloudci/oracle-xe
 ```
 
 Run with 22 and 1521 ports opened:
 
 ```Shell
-docker run -d -p 49160:22 -p 49161:1521 owncloudci/oracle-xe-11g
+docker run -d -p 49160:22 -p 49161:1521 owncloudci/oracle-xe
 ```
 
 Connect database with following setting:

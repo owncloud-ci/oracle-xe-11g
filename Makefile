@@ -1,4 +1,4 @@
-IMAGE_NAME ?= owncloudci/oracle-xe-11g:latest
+IMAGE_NAME ?= owncloudci/oracle-xe:latest
 
 BUILD_VERSION ?= latest
 BUILD_ARCH ?= amd64
