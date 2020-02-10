@@ -72,7 +72,6 @@ def docker(config):
       'arch': config['platform'],
     },
     'steps': steps(config),
-    'volumes': volumes(config),
     'image_pull_secrets': [
       'registries',
     ],
@@ -157,92 +156,23 @@ def rocketchat(config):
     },
   }
 
-def prepublish(config):
+def dryrun(config):
   return [{
-    'name': 'prepublish',
+    'name': 'dryrun',
     'image': 'plugins/docker',
     'settings': {
-      'username': {
-        'from_secret': 'internal_username',
-      },
-      'password': {
-        'from_secret': 'internal_password',
-      },
-      'tags': config['internal'],
+      'dry_run': True,
+      'tags': config['tag'],
       'dockerfile': '%s/Dockerfile.%s' % (config['path'], config['arch']),
-      'repo': 'registry.drone.owncloud.com/owncloudci/oracle-xe',
-      'registry': 'registry.drone.owncloud.com',
+      'repo': 'owncloudci/oracle-xe',
       'context': config['path'],
-      'purge': False,
     },
-    'volumes': [
-      {
-        'name': 'docker',
-        'path': '/var/lib/docker',
-      },
-    ],
-  }]
-
-def sleep(config):
-  return [{
-    'name': 'sleep',
-    'image': 'toolhippie/reg:latest',
-    'environment': {
-      'DOCKER_USER': {
-        'from_secret': 'internal_username',
-      },
-      'DOCKER_PASSWORD': {
-        'from_secret': 'internal_password',
-      },
-    },
-    'commands': [
-      'retry -- reg digest --username $DOCKER_USER --password $DOCKER_PASSWORD registry.drone.owncloud.com/owncloudci/oracle-xe:%s' % config['internal'],
-    ],
-  }]
-
-def trivy(config):
-  if config['arch'] != 'amd64':
-    return []
-
-  return [
-    {
-      'name': 'database',
-      'image': 'plugins/download',
-      'settings': {
-        'source': 'https://download.owncloud.com/internal/trivy.db',
-        'destination': 'trivy/db/trivy.db',
-        'username': {
-          'from_secret': 'download_username',
-        },
-        'password': {
-          'from_secret': 'download_password',
-        },
-      },
-    },
-    {
-      'name': 'trivy',
-      'image': 'toolhippie/trivy:latest',
-      'environment': {
-        'TRIVY_AUTH_URL': 'https://registry.drone.owncloud.com',
-        'TRIVY_USERNAME': {
-          'from_secret': 'internal_username',
-        },
-        'TRIVY_PASSWORD': {
-          'from_secret': 'internal_password',
-        },
-        'TRIVY_SKIP_UPDATE': True,
-        'TRIVY_NO_PROGRESS': True,
-        'TRIVY_IGNORE_UNFIXED': True,
-        'TRIVY_TIMEOUT': '5m',
-        'TRIVY_EXIT_CODE': '1',
-        'TRIVY_SEVERITY': 'HIGH,CRITICAL',
-        'TRIVY_CACHE_DIR': '/drone/src/trivy'
-      },
-      'commands': [
-        'retry -- trivy registry.drone.owncloud.com/owncloudci/oracle-xe:%s' % config['internal'],
+    'when': {
+      'ref': [
+        'refs/pull/**',
       ],
     },
-  ]
+  }]
 
 def publish(config):
   return [{
@@ -261,50 +191,13 @@ def publish(config):
       'context': config['path'],
       'pull_image': False,
     },
-    'volumes': [
-      {
-        'name': 'docker',
-        'path': '/var/lib/docker',
-      },
-    ],
     'when': {
       'ref': [
         'refs/heads/master',
+        'refs/tags/**',
       ],
     },
   }]
-
-def cleanup(config):
-  return [{
-    'name': 'cleanup',
-    'image': 'toolhippie/reg:latest',
-    'failure': 'ignore',
-    'environment': {
-      'DOCKER_USER': {
-        'from_secret': 'internal_username',
-      },
-      'DOCKER_PASSWORD': {
-        'from_secret': 'internal_password',
-      },
-    },
-    'commands': [
-      'reg rm --username $DOCKER_USER --password $DOCKER_PASSWORD registry.drone.owncloud.com/owncloudci/oracle-xe:%s' % config['internal'],
-    ],
-    'when': {
-      'status': [
-        'success',
-        'failure',
-      ],
-    },
-  }]
-
-def volumes(config):
-  return [
-    {
-      'name': 'docker',
-      'temp': {},
-    },
-  ]
 
 def steps(config):
-  return prepublish(config) + sleep(config) + trivy(config) + publish(config) + cleanup(config)
+  return dryrun(config) + publish(config)
