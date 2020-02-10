@@ -10,6 +10,8 @@ def main(ctx):
   config = {
     'version': None,
     'arch': None,
+    'trigger': [],
+    'repo': ctx.repo.name
   }
 
   stages = []
@@ -53,7 +55,7 @@ def main(ctx):
     stages.extend(inner)
 
   after = [
-    rocketchat(config),
+    notification(config),
   ]
 
   for s in stages:
@@ -118,11 +120,48 @@ def manifest(config):
     },
   }
 
-def rocketchat(config):
+def notification(config):
+  steps = [{
+    'name': 'notify',
+    'image': 'plugins/slack',
+    'settings': {
+      'webhook': {
+        'from_secret': 'private_rocketchat',
+      },
+      'channel': 'builds',
+    },
+    'when': {
+      'status': [
+        'success',
+        'failure',
+      ],
+    },
+  }]
+
+  downstream = [{
+    'name': 'downstream',
+    'image': 'plugins/downstream',
+    'settings': {
+      'token': {
+        'from_secret': 'drone_token',
+      },
+      'server': 'https://drone.owncloud.com',
+      'repositories': config['trigger'],
+    },
+    'when': {
+      'status': [
+        'success',
+      ],
+    },
+  }]
+
+  if config['trigger']:
+    steps = downstream + steps
+
   return {
     'kind': 'pipeline',
     'type': 'docker',
-    'name': 'rocketchat',
+    'name': 'notification',
     'platform': {
       'os': 'linux',
       'arch': 'amd64',
@@ -130,19 +169,7 @@ def rocketchat(config):
     'clone': {
       'disable': True,
     },
-    'steps': [
-      {
-        'name': 'notify',
-        'image': 'plugins/slack',
-        'failure': 'ignore',
-        'settings': {
-          'webhook': {
-            'from_secret': 'private_rocketchat',
-          },
-          'channel': 'builds',
-        },
-      },
-    ],
+    'steps': steps,
     'depends_on': [],
     'trigger': {
       'ref': [
@@ -164,7 +191,7 @@ def dryrun(config):
       'dry_run': True,
       'tags': config['tag'],
       'dockerfile': '%s/Dockerfile.%s' % (config['path'], config['arch']),
-      'repo': 'owncloudci/oracle-xe',
+      'repo': 'owncloudci/%s' % config['repo'],
       'context': config['path'],
     },
     'when': {
@@ -187,7 +214,7 @@ def publish(config):
       },
       'tags': config['tag'],
       'dockerfile': '%s/Dockerfile.%s' % (config['path'], config['arch']),
-      'repo': 'owncloudci/oracle-xe',
+      'repo': 'owncloudci/%s' % config['repo'],
       'context': config['path'],
       'pull_image': False,
     },
