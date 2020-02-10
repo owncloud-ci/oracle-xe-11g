@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM owncloud/ubuntu:18.04
 
 LABEL maintainer="ownCloud DevOps <devops@owncloud.com>" \
   org.label-schema.name="ownCloud CI Oracle XE" \
@@ -14,6 +14,7 @@ COPY rootfs /
 
 # Install sshd
 RUN apt-get update -y && \
+    apt-get upgrade -y && \
     apt-get install -y openssh-server && \
     mkdir /var/run/sshd && \
     echo 'root:admin' | chpasswd && \
@@ -23,6 +24,7 @@ RUN apt-get update -y && \
 
 # Prepare to install Oracle
 RUN apt-get update -y && \
+    apt-get upgrade -y && \
     apt-get install -y libaio1 net-tools bc && \
     ln -s /usr/bin/awk /bin/awk && \
     mkdir -p /var/lock/subsys || true
@@ -37,13 +39,14 @@ RUN cat /oracle/oracle-xe_11.2.0-1.0_amd64.deba* > /oracle/oracle-xe_11.2.0-1.0_
     echo 'export PATH=$ORACLE_HOME/bin:$PATH' >> /etc/bash.bashrc && \
     echo 'export ORACLE_SID=XE' >> /etc/bash.bashrc && \
     rm -rf /oracle/oracle-xe_11.2.0-1.0_amd64.deb* && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get clean -y && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 EXPOSE 22
 EXPOSE 1521
 EXPOSE 8080
 
 CMD sed -i -E "s/HOST = [^)]+/HOST = $HOSTNAME/g" /u01/app/oracle/product/11.2.0/xe/network/admin/listener.ora; \
-	service oracle-xe start; \
-	sqlplus -s -l system/oracle @owncloud; \
-	/usr/sbin/sshd -D
+	  service oracle-xe start; \
+	  sqlplus -s -l system/oracle @owncloud; \
+	  /usr/sbin/sshd -D
