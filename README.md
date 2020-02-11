@@ -6,19 +6,19 @@ Oracle Express Edition on Ubuntu - including a database for ownCloud CI.
 
 ## Usage
 
-```Shell
+```console
 docker pull owncloudci/oracle-xe
 ```
 
 Run with 22 and 1521 ports opened:
 
-```Shell
+```console
 docker run -d -p 49160:22 -p 49161:1521 owncloudci/oracle-xe
 ```
 
 Connect database with following setting:
 
-```Shell
+```console
 hostname: localhost
 port: 49161
 sid: xe
@@ -28,20 +28,20 @@ password: oracle
 
 Password for SYS & SYSTEM:
 
-```Shell
+```console
 oracle
 ```
 
 Login by SSH:
 
-```Shell
+```console
 ssh root@localhost -p 49160
 password: admin
 ```
 
 Connect to ownCloud CI database:
 
-```Shell
+```console
 username: autotest
 password: owncloud
 ```
