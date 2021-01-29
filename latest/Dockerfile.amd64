@@ -1,9 +1,11 @@
 FROM owncloud/ubuntu:18.04
 
-LABEL maintainer="ownCloud DevOps <devops@owncloud.com>" \
-  org.label-schema.name="ownCloud CI Oracle XE" \
-  org.label-schema.vendor="ownCloud GmbH" \
-  org.label-schema.schema-version="1.0"
+LABEL maintainer="ownCloud DevOps <devops@owncloud.com>"
+LABEL org.opencontainers.image.authors="ownCloud DevOps <devops@owncloud.com>"
+LABEL org.opencontainers.image.title="ownCloud CI Oracle XE"
+LABEL org.opencontainers.image.url="https://github.com/owncloud-ci/oracle-xe"
+LABEL org.opencontainers.image.source="https://github.com/owncloud-ci/oracle-xe"
+LABEL org.opencontainers.image.documentation="https://github.com/owncloud-ci/oracle-xe"
 
 ENV ORACLE_HOME /u01/app/oracle/product/11.2.0/xe
 ENV PATH $ORACLE_HOME/bin:$PATH
