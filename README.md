@@ -1,6 +1,10 @@
 # oracle-xe
 
-[![Build Status](https://drone.owncloud.com/api/badges/owncloud-ci/oracle-xe/status.svg)](https://drone.owncloud.com/owncloud-ci/oracle-xe)
+[![Build Status](https://img.shields.io/drone/build/owncloud-ci/oracle-xe?logo=drone&server=https%3A%2F%2Fdrone.owncloud.com)](https://drone.owncloud.com/owncloud-ci/oracle-xe)
+[![Docker Hub](https://img.shields.io/docker/v/owncloudci/oracle-xe?logo=docker&label=dockerhub&sort=semver&logoColor=white)](https://hub.docker.com/r/owncloudci/oracle-xe)
+[![GitHub contributors](https://img.shields.io/github/contributors/owncloud-ci/oracle-xe)](https://github.com/owncloud-ci/oracle-xe/graphs/contributors)
+[![Source: GitHub](https://img.shields.io/badge/source-github-blue.svg?logo=github&logoColor=white)](https://github.com/owncloud-ci/oracle-xe)
+[![License: MIT](https://img.shields.io/github/license/owncloud-ci/oracle-xe)](https://github.com/owncloud-ci/oracle-xe/blob/master/LICENSE)
 
 Oracle Express Edition on Ubuntu - including a database for ownCloud CI.
 
@@ -48,4 +52,10 @@ password: owncloud
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/owncloud-ci/oracle-xe/blob/master/LICENSE) file for details.
+
+## Copyright
+
+```Text
+Copyright (c) 2021 ownCloud GmbH
+```
